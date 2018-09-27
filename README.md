@@ -1,16 +1,17 @@
+# MicPlot
+! [alt text] (https://pbs.twimg.com/profile_images/909776348490665985/CGYKLZLV_400x400.jpg)
+
+A python tool for plotting .mic files which display data for polycrystalline materials.  Based in Carnegie Mellon University Physics/Material Science Department under Professor Robert M. Suter.
+
+## How to Use:
+Use the PlotMic.py tool to plot the .mic file to display.  Upon doing so, the entire image will appear on your display.  To replot a specific grain, click on the said grain.  Doing so will show the average information about that area. To replot, simply press "enter" which will prompt a new window with the more specific grain.  Doing so will enhance the differences in the grain.
+
+<--- Maybe add picture? -->
+[logo]: https://pbs.twimg.com/profile_images/909776348490665985/CGYKLZLV_400x400.jpg
+
+
 # micscanning
-=======
 
-HEDM visualization tool
+A valiant effort by Grayson Frazier to depart from his beloved Euler angles and embrace the harsh reality of misorientation angles.  This also now includes trying to add a slider in the replot.
 
-Interactive Version!
-Parameters used for narrowing down grains are just the euler angles, and thus the selection method still has room for noise.
-
-Color expansion is now based on rodrigues vectors.
-
-Steps to run program:
-1. Run python at home directory
-2. type "import MicFileTool" + enter
-3. type "MicFileTool.run()" + enter
-4. Follow on-screen instructions
-5. Get a beautiful plot!
+Click on a voxel to gain its angle information.  Then, if desired, click enter to replot the data.  I am currently working on adding a slider to adjust what is replotted.
