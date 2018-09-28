@@ -1,4 +1,8 @@
-# micscanning
+# MicPlot
+## pixelborders
+=======
+
+Branch to modify new HEDM pixel format and add borders.
 =======
 
 HEDM visualization tool
