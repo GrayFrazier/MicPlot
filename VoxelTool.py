@@ -15,6 +15,7 @@ from matplotlib.patches import Patch
 from matplotlib.collections import PatchCollection
 from matplotlib.collections import LineCollection
 import numpy as np
+import math
 
 
 class Voxel():
@@ -136,7 +137,7 @@ def order_snp(snp):
     This is already assumed in the files, but just to be safe :)
     Assumes all z are the same
     '''
-    snp = sorted(snp , key=lambda k: [k[1], k[0], k[3]]) #also sorts by triangle orientation (row, column, then orientation)
+    snp = sorted(snp , key=lambda k: [k[0], k[1], k[3]]) #also sorts by triangle orientation (row, column, then orientation)
     return snp
 
 def Make_Borders(snp, sw):
@@ -148,14 +149,14 @@ def Make_Borders(snp, sw):
     '''
 
     #MAKE TUPLES (ROW, u/d)  [u/d is just 'u' or 'd']
-    order_snp(snp) #just to be sure
+    #order_snp(snp) #just to be sure
     #initializing primary values for the loop
     row_dict = {} #the format will be row:elements
     ################################
     ###Making Some changes##########
     ################################
-    
-    
+
+
     #initialize values
     y_value = snp[0,0] #initial value
     if snp[0][3] == 1: #Pointing up
@@ -163,10 +164,10 @@ def Make_Borders(snp, sw):
     else:
         row = (0,'d')
     row_dict[row] = []
-    
+
     #making rows to later make a border
     for i in range(len(snp)):
-        if abs(snp[i,1] - y_value)<= .000001: #agrees with the accuracy of most mic files
+        if math.isclose(snp[i,1], y_value): #if abs(snp[i,1] - y_value)<= .000001: #agrees with the accuracy of most mic files
             if snp[i,3] == 1: #Triangle facing up
                	 np.append(row_dict[(row[0], "u")], snp[i])
 
@@ -177,7 +178,8 @@ def Make_Borders(snp, sw):
             y_value = snp[i,1]
             row_dict[row] = snp[i] #start a new row term
     print("here boi:", row_dict[list(row_dict.keys())[0]])
-    print("here boi:", row_dict[(0, 'u')])
+    print("here batta batta,", list(row_dict.keys())[0])
+    print("here boi:", row_dict[(0, 'd')])
     #list(x.keys()) or do for i in x.keys()
     '''
     row_i = 1#initial value
