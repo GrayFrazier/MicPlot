@@ -1,11 +1,16 @@
 '''
 Writen by Grayson Frazier
 
+Please consult a very elegant user guide for how to use basic functions
+
 This script contains the "VoxelClick" class which allows for interaction with plot
 To be used with plot_mic_patches function in MicFileTool
 
 Modified by Doyee Byun
 Added feature that supports the new square matrix data format
+
+Modified Once Again by Grayon Frazier
+Added borders to the pixel matrix
 '''
 
 import matplotlib as mpl
@@ -186,12 +191,15 @@ def order_snp(snp):
     '''
     snp = sorted(snp , key=lambda k: [k[1], k[0], k[3]]) #also sorts by triangle orientation (row, column, then orientation)
     return snp
-    
+
 #Are you bored yet?  Ha, get it?  Borders?
 #ok, I'll stop now
 
+def Make_SquareBorders(snp,sw):
+    
+"""
 def Make_Square_Borders(snp,sw):
-    ''
+    '''
     Requires the snp data and side width
     Parses through the entire mic file
     Makes borders to later be utilized by Borders class
@@ -205,8 +213,8 @@ def Make_Square_Borders(snp,sw):
     ################################
     ###Making Some changes##########
     ################################
-    
-    
+
+
     #initialize values
     y_value = snp[0,0] #initial value
     if snp[0][3] == 1: #Pointing up
@@ -214,7 +222,7 @@ def Make_Square_Borders(snp,sw):
     else:
         row = (0,'d')
     row_dict[row] = []
-    
+
     #making rows to later make a border
     for i in range(len(snp)):
         if abs(snp[i,1] - y_value)<= .000001: #agrees with the accuracy of most mic files
@@ -230,7 +238,6 @@ def Make_Square_Borders(snp,sw):
     print("here boi:", row_dict[list(row_dict.keys())[0]])
     print("here boi:", row_dict[(0, 'u')])
     #list(x.keys()) or do for i in x.keys()
-    '''
     row_i = 1#initial value
     #row_dict[row] = []
     #making rows to later make a border
@@ -245,7 +252,6 @@ def Make_Square_Borders(snp,sw):
             x_value = snp[i,0]
             row_dict[(row_i, 'u'] = snp[i] #start a new row term
     #list(x.keys()) or do for i in x.keys()
-    '''
 
     #and now it's time to make da borders!  Go top to bottom
     '''
@@ -254,7 +260,7 @@ def Make_Square_Borders(snp,sw):
     border_list = np.array([]) #in the form [line segment, left/up voxel, right/down voxel]
     outside_edges = np.array([]) #these are just outside borders in the form [line segment, voxel]
 
-    """The Row-to-Row Borders""" #make sure last one doesn't call an error
+    '''The Row-to-Row Borders''' #make sure last one doesn't call an error
     for row in row_dict.keys():
         if row[1] == 'd': #dealing with down triangles"range((len(row_dict.keys())-len(row_dict.keys())%2)/2): #for every row (accounts for up and down hence the modulus)" <-- nevermid, ditched this format (too much work)
             for row1indx in range(len(row_dict[row])): #the row1indx is just the index of that row, just to make it easier for Grayson
@@ -274,7 +280,7 @@ def Make_Square_Borders(snp,sw):
                                 outside_edges = np.append(outside_edges, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[bottom_key][row2indx-1]])
                         break #break to save computing time
 
-    """The Same-Row (i.e. horizontal) Borders"""
+    '''The Same-Row (i.e. horizontal) Borders'''
     #print row_dict[row_dict.keys[0]]
     for row in row_dict.keys(): #must fix 'u'
         if row[1] == 'u':
@@ -297,7 +303,7 @@ def Make_Square_Borders(snp,sw):
                 #######Something went wrong here.................................................................
                 #based on border_list = np.append(border_list, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
 
-    """The Top and Bottom Edges"""
+    '''The Top and Bottom Edges'''
     if (0, "u") in row_dict.keys():
         for i in range(len(row_dict[row])):
             point = row_dict[(0, "u")][i][0:2]
@@ -321,3 +327,4 @@ def Make_Square_Borders(snp,sw):
         outside_edges = np.append(outside_edges, [ right_line, row_dict[(max(blah), "d")][i]])
 
     return border_list, outside_edges #a collection of Borders
+"""

@@ -828,3 +828,5 @@ def run():
             plottype_i = 2
         m.plot_mic_patches(plottype_i,conf_f,1,False,[])
     return
+
+run()

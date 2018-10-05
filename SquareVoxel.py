@@ -79,6 +79,27 @@ class SquarePoint():
             if left_misor > misor_thresh:
                 self.block_left()
 
+def square_angle_limiter(x,y, data, coords, misor_thresh=1.0):
+    points = []
+    xi = coords[0]
+    yi = coords[1]
+    angles = []
+    angles.append(data[xi,yi,3])
+    angles.append(data[xi,yi,4])
+    angles.append(data[xi,yi,5])
+    current_point = SquarePoint(xi,yi)
+    current_point.set_angles(angles)
+    current_point.check_points(data,x,y,misor_thresh)
+    points.append(current_point)
+    if not current_point.up_blocked:
+        points = recursive_limiter(x,y,data,points,[xi,yi+1],misor_thresh)
+    if not current_point.right_blocked:
+        points = recursive_limiter(x,y,data,points,[xi+1,yi],misor_thresh)
+    if not current_point.down_blocked:
+        points = recursive_limiter(x,y,data,points,[xi,yi-1],misor_thresh)
+    if not current_point.left_blocked:
+        points = recursive_limiter(x,y,data,points,[xi-1,yi],misor_thresh)
+    return points
 
 def recursive_limiter(x,y,data,points,coords,misor_thresh):
     new_point = None
@@ -107,27 +128,7 @@ def recursive_limiter(x,y,data,points,coords,misor_thresh):
         points = recursive_limiter(x,y,data,points,[xi-1,yi],misor_thresh)
     return points
 
-def square_angle_limiter(x,y, data, coords, misor_thresh=1.0):
-    points = []
-    xi = coords[0]
-    yi = coords[1]
-    angles = []
-    angles.append(data[xi,yi,3])
-    angles.append(data[xi,yi,4])
-    angles.append(data[xi,yi,5])
-    current_point = SquarePoint(xi,yi)
-    current_point.set_angles(angles)
-    current_point.check_points(data,x,y,misor_thresh)
-    points.append(current_point)
-    if not current_point.up_blocked:
-        points = recursive_limiter(x,y,data,points,[xi,yi+1],misor_thresh)
-    if not current_point.right_blocked:
-        points = recursive_limiter(x,y,data,points,[xi+1,yi],misor_thresh)
-    if not current_point.down_blocked:
-        points = recursive_limiter(x,y,data,points,[xi,yi-1],misor_thresh)
-    if not current_point.left_blocked:
-        points = recursive_limiter(x,y,data,points,[xi-1,yi],misor_thresh)
-    return points
+
 
 def plot_square_mic(SquareMic,squareMicData, minHitRatio,coords, misor_thresh):
     '''
