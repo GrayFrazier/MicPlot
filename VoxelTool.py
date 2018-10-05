@@ -195,8 +195,6 @@ def order_snp(snp):
 #Are you bored yet?  Ha, get it?  Borders?
 #ok, I'll stop now
 
-def Make_SquareBorders(snp,sw):
-    
 """
 def Make_Square_Borders(snp,sw):
     '''

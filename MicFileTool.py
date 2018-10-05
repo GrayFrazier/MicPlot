@@ -829,4 +829,6 @@ def run():
         m.plot_mic_patches(plottype_i,conf_f,1,False,[])
     return
 
-run()
+#run()
+stuff = np.load("Au_100x100_0.0001.npy")
+print(stuff)
