@@ -3,7 +3,7 @@ Written By Grayson Frazier
 Contains the code to make borders for both .mic formats
 '''
 
-def order_square_data:
+def order_square_data():
     '''
     Top to Bottom and then Left to Right
     This is already assumed in the files, but just to be safe :)
@@ -40,16 +40,21 @@ def make_square_borders(SquareMic, SquareMicData):
     '''
     #Data organized by column, row, then orientation
 
-    def make_left_side(SquareMic, smd0):
+    def make_left_side(SquareMic, data):
         '''
         Make left wall
-        requires left smd
+        Returns list
         '''
-        left_borders = np.array()
-        for i in smd0:
-            point1 = [smd[i][0], smd[i][1], smd[i][2]]
-            point2 = [smd[i][0], smd[i][1], smd[i][2]]
-            np.append(left_borders, point1, point2, None, smd[i])
-        return left_borders
+        point1 = [data[i][0], data[i][1], data[i][2]]
+        point2 = [data[i][0], data[i][1], data[i][2]]
+        left_border = [point1, point2, None, data]
+        return left_border
 
-    def make_right_side(SquareMic, smdf)
+    def make_right_side(SquareMic, data)
+        '''
+        Make right wall
+        '''
+        point1 = [data[i][0], data[i][1], data[i][2]]
+        point2 = [data[i][0], data[i][1], data[i][2]]
+        right_border = [point1, point, data, None ]
+        return right_border
