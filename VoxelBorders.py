@@ -16,7 +16,7 @@ class border():
     '''
     simple class just to make things prettier
     in the form
-    [[x1,y1], [x2,y2], left/up, right/down]
+    [[x1,y1], [x2,y2], left/up data, right/down data]
     '''
     def __init__(self, point1, point2, luvoxel = None, rdvoxel=None):
         self.point1 = point1
@@ -24,8 +24,34 @@ class border():
         self.luvoxel = luvoxel
         self.rdvoxel = rdvoxel
 
+def makeTriangleRowDict(voxelData):
+    '''
+    Used to make a dictionary of rows
+    To be implemented for triangular voxel type w/ legacy file format
+    Assume that the data is ordered by x,y,z
+    
+    RowDict in the form [x, 'u'/'d'] = [voxelData]
+    
+    Legacy File Format:
+    Col 0-2 x, y, z
+    Col 3   1 = triangle pointing up, 2 = triangle pointing down
+    Col 4 generation number; triangle size = sidewidth /(2^generation number )
+    Col 5 Phase - 1 = exist, 0 = not fitted
+    Col 6-8 orientation
+    Col 9  Confidence
+    '''
+    
+    x = voxelData[0][0] #takes the first x value
+    for voxel in voxelData:
+        if voxel[3] == 1: #triangle up
+        
+        if abs(voxel[0][0]-x) <= 1e-4:
+            row[x,]
+        
+        
+    
 
-def make_square_borders(SquareMic, SquareMicData):
+def makeSquareBorders(SquareMic, SquareMicData):
     '''
     Returns a collection of borders
     Includes the two points, and the left/up voxel and the right/down voxel
