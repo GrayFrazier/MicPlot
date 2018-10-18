@@ -167,7 +167,7 @@ def Make_Borders(snp, sw):
 
     #making rows to later make a border
     for i in range(len(snp)):
-        if math.isclose(snp[i,1], y_value): #if abs(snp[i,1] - y_value)<= .000001: #agrees with the accuracy of most mic files
+        if round(abs(snp[i,1]- y_value),5)==0: #if abs(snp[i,1] - y_value)<= .000001: #agrees with the accuracy of most mic files
             if snp[i,3] == 1: #Triangle facing up
                	 np.append(row_dict[(row[0], "u")], snp[i])
 
