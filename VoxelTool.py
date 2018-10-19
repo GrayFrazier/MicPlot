@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib.collections import Collection
 from matplotlib.patches import Polygon
-from matplotlib.patches import Patch
+fromj matplotlib.patches import Patch
 from matplotlib.collections import PatchCollection
 from matplotlib.collections import LineCollection
 import numpy as np

@@ -137,5 +137,6 @@ def make_borders(snp, sw):
         outside_edges = np.append(outside_edges, [ left_line, row_dict[(max(blah), "d")][i]])
         outside_edges = np.append(outside_edges, [ right_line, row_dict[(max(blah), "d")][i]])
     """
-
+    
+    return border_list, outside_edges
 make_borders(snp,sw)
