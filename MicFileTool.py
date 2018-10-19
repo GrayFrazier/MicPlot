@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+"""
 '''
 NOTE TO FUTURE SELF: IDEAS!
 Automatically take in account +/- 15% angles (or maybe 10)
@@ -387,6 +387,7 @@ def combine_mic():
 #MicFile("Al_final_z1_refit.mic").plot_mic_patches()
 #MicFile("Al_final_z1_refit.mic").plot_mic_patches()
 =======
+"""
 '''
 Writen by He Liu
 Wed Apr 26 2017
@@ -1219,6 +1220,5 @@ def run():
     return
 
 #run()
-stuff = np.load("Au_100x100_0.0001.npy")
-print(stuff)
->>>>>>> squareBorders
+#stuff = np.load("Au_100x100_0.0001.npy")
+#print(stuff)

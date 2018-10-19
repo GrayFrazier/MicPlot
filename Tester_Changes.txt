@@ -1,5 +1,8 @@
 List of changes in the tester file working on:
 
+
+ALSO, FIX THE PRINT STATEMENTS!
+
 Line 65: added if statement to make sure row exists:
   ERROR: File "Tester.py", line 65, in <module>
     for row2indx in range(len(row_dict[(row[0]+1, "u")])): #testing points in next row which are up triangless
