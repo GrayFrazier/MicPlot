@@ -290,13 +290,17 @@ class VoxelBorders(): #possibly make it derivative of LineCollection
             alpha_levels.append(1)
         self.border_collection = LineCollection(lines)
         self.alpha_levels = alpha_levels
-    """
+    
     def draw_borders(self, function):
         '''
         Function which goes through every border and will either make it visible or invisible
         Border is determined by a function inputed from the RotRep
         '''
-
-        if function(self.LeftUpSide, self.RightDownSide)
+	for border in self.border_list:
+		if function(border) >= threshold:
+			border.alpha_level = 0
+		else:
+			border.alpha_level =1
+	return borders
         return None
-    """
+
