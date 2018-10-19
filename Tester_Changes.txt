@@ -1,0 +1,9 @@
+List of changes in the tester file working on:
+
+Line 65: added if statement to make sure row exists:
+  ERROR: File "Tester.py", line 65, in <module>
+    for row2indx in range(len(row_dict[(row[0]+1, "u")])): #testing points in next row which are up triangless
+KeyError: (113, 'u')
+
+
+commented out 95: #border_list = np.append(border_list, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
