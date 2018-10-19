@@ -22,8 +22,8 @@ from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 from matplotlib.collections import PolyCollection
 import RotRep
-from VoxelTool import VoxelClick
-from VoxelTool import VoxelBorders
+#from VoxelTool import VoxelClick
+#from VoxelTool import VoxelBorders
 
 
 def dist_to_line(point,line):
@@ -381,7 +381,7 @@ def combine_mic():
     #combine_mic()
 
 #clicked_angles = MicFile("395z0.mic.LBFS").plot_mic_patches(1,0.8,1,False,[])
-MicFile("395z0.mic.LBFS").plot_mic_patches()#2,0.8,1,False,[])
+#MicFile("395z0.mic.LBFS").plot_mic_patches()#2,0.8,1,False,[])
 #MicFile("Al_initial_z1_refit.mic").plot_mic_patches()
 #MicFile("Al_final_z1_refit.mic").plot_mic_patches()
 #MicFile("Al_final_z1_refit.mic").plot_mic_patches()

@@ -21,7 +21,7 @@ for voxel in snp:
 
     count += 1
     if count > 1000:
-        pass
+        break
     
     if round(voxel[1], 6) in row_y_values:
         indx = row_y_values.index(round(voxel[1],6))
@@ -61,43 +61,38 @@ outside_edges = np.array([]) #these are just outside borders in the form [line s
 '''The Row-to-row Borders''' #make sure last one doesn't call an error
 for row in row_dict.keys():
     if row[1] == 'd': #dealing with down triangles"range((len(row_dict.keys())-len(row_dict.keys())%2)/2): #for every row (accounts for up and down hence the modulus)" <-- nevermid, ditched this format (too much work)
-        for row1indx in range(len(row_dict[row])): #the row1indx is just the index of that row, just to make it easier for Grayson
-            for row2indx in range(len(row_dict[(row[0]+1, "u")])): #testing points in next row which are up triangless
-                bottom_key = (row[0] +1, "u") #just for ease on the eyes
-                if abs(row_dict[bottom_key][row2indx][0]-row_dict[row][row1indx][0]) <= 1.01*sw/2: #if the two points are within the desired side width (think right triangles)
-                    if row_dict[row][row1indx][0] - row_dict[bottom_key][row2indx][0] <= 0: #the bottom row's point is to the left
-                        if row1indx != 0: #the point is not the first in the index
-                            border_list = np.append(border_list, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
-                            #                                      ^Line Segment                                                         ^Left/Upper Voxel          ^Lower/Right Voxel
-                        else: #if first index, it is a left edge
-                            outside_edges = np.append(outside_edges, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]], row_dict[bottom_key][row2indx]])
-                    else: #bottom row index to the right
-                        if row2indx != len(row_dict[row+1])-1: #the point is not the last in the index
-                            border_list = np.append(border_list, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[bottom_key][row2indx-1], row_dict[row][row1indx]])
-                        else: #iif last index, it is a right edge
-                            outside_edges = np.append(outside_edges, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[bottom_key][row2indx-1]])
-                    break #break to save computing time
+        for row1indx in range(len(row_dict[row])):#the row1indx is just the index of that row, just to make it easier for Grayson
+            if (row[0]+1, 'u') in row_dict.keys():
+                for row2indx in range(len(row_dict[(row[0]+1, "u")])): #testing points in next row which are up triangless
+                    bottom_key = (row[0] +1, "u") #just for ease on the eyes
+                    if abs(row_dict[bottom_key][row2indx][0]-row_dict[row][row1indx][0]) <= 1.01*sw/2: #if the two points are within the desired side width (think right triangles)
+                        if row_dict[row][row1indx][0] - row_dict[bottom_key][row2indx][0] <= 0: #the bottom row's point is to the left
+                            if row1indx != 0: #the point is not the first in the index
+                                border_list = np.append(border_list, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
+                                #                                      ^Line Segment                                                         ^Left/Upper Voxel          ^Lower/Right Voxel
+                            else: #if first index, it is a left edge
+                                outside_edges = np.append(outside_edges, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]], row_dict[bottom_key][row2indx]])
+                        else: #bottom row index to the right
+                            if row2indx != len(row_dict[(row[0] + 1, 'd')])-1: #the point is not the last in the index
+                                border_list = np.append(border_list, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[bottom_key][row2indx-1], row_dict[row][row1indx]])
+                            else: #iif last index, it is a right edge
+                                outside_edges = np.append(outside_edges, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[bottom_key][row2indx-1]])
+                        break #break to save computing time
+
 
 '''The Same-Row (i.e. horizontal) Borders'''
 #print row_dict[row_dict.keys[0]]
 for row in row_dict.keys(): #must fix 'u'
     if row[1] == 'u':
         for i in range(len(row_dict[row])-1): #-1 to account for the last edge
-            print("Check_0" + str(i))
-            print(row_dict[row])
-            print(row_dict[row][i])
             x = row_dict[row]
             y = x[i]
-            print("y is ", y)
             z = y[0:2]
-            print("Check 1: " + str(row_dict[row][i][0:2]))
-            print("Check 2: " + str(row_dict[row][i][0:2]))
-            print("Check 3: " + str(row_dict[row][i]))
-            print("Check 4: " + str(row_dict[(row[0], "d")][i]))
 
             border_list = np.append(border_list, [ [row_dict[row][i][0:2],        row_dict[row][i][0:2]],                 row_dict[row][i],         row_dict[(row[0], "d")][i]])
             #border_list = np.append(border_list, [ [row_dict[row][i][0:2],        row_dict[row][i][0:2]],                row_dict[row][(row[0], "d")]])
-            border_list = np.append(border_list, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
+            
+            #border_list = np.append(border_list, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
             #######Something went wrong here.................................................................
             #based on border_list = np.append(border_list, [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
 
@@ -106,20 +101,21 @@ if (0, "u") in row_dict.keys():
     for i in range(len(row_dict[row])):
         point = row_dict[(0, "u")][i][0:2]
         sl = row_dict[(0, "u")][i][4] #generation number
-        left_line =  [ [point, [point[0] + sl/2, point[1] + sl*sqrt(3)/2]] ]
-        right_line = [ [[point[0] + sl/2, point[1] + sl*sqrt(3)/2]], [point[0] + sl, point[1]] ]
+        left_line =  [ [point, [point[0] + sl/2, point[1] + sl*np.sqrt(3)/2]] ]
+        right_line = [ [[point[0] + sl/2, point[1] + sl*np.sqrt(3)/2]], [point[0] + sl, point[1]] ]
 
         outside_edges = np.append(outside_edges, [ left_line, row_dict[(0, "u")][i]])
         outside_edges = np.append(outside_edges, [ right_line, row_dict[(0, "u")][i]])
-
+"""
 blah = [] #sorry, coulldn't think of a name
 for term in row_dict.keys():
     blah.append(term[0]) #row number
 if (max(blah), "d") in row_dict.keys():
     point = row_dict[(max(blah), "d")][i][0:2]
     sl = row_dict[(max(blah), "d")][i][4] #generation number
-    left_line =  [ [point, [point[0] + sl/2, point[1] - sl*sqrt(3)/2]] ]
-    right_line = [ [[point[0] + sl/2, point[1] - sl*sqrt(3)/2]], [point[0] + sl, point[1]] ]
+    left_line =  [ [point, [point[0] + sl/2, point[1] - sl*np.sqrt(3)/2]] ]
+    right_line = [ [[point[0] + sl/2, point[1] - sl*np.sqrt(3)/2]], [point[0] + sl, point[1]] ]
 
     outside_edges = np.append(outside_edges, [ left_line, row_dict[(max(blah), "d")][i]])
     outside_edges = np.append(outside_edges, [ right_line, row_dict[(max(blah), "d")][i]])
+"""
