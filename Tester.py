@@ -19,8 +19,7 @@ for edge in outside_edges:
     edges.append(edge[0])
 
 i=2
-print(edges[i])
-print(border_lines[i])
+
 
 
 
@@ -28,9 +27,9 @@ border_collecton = mc.LineCollection(border_lines)
 edge_collection = mc.LineCollection(edges)
 ax = plt.axes()
 ax.add_collection(border_collecton)
-ax.add_collection(edge_collection)
+#ax.add_collection(edge_collection)
 
 fig = plt.gcf()
-ax.set_xlim((-2,2))
-ax.set_ylim((-2,20))
+ax.set_xlim((-1,1))
+ax.set_ylim((-1,1))
 plt.show()

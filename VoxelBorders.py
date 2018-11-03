@@ -34,7 +34,7 @@ def make_borders(snp, sw):
         border_list = np.array([]) #in the form [line segment, left/up voxel, right/down voxel]
         outside_edges = np.array([]) #these are just outside borders in the form [line segment, voxel]
     '''
-    sw = sw/2**snp[0,4]
+    side = sw/2**snp[0,4]
     y_value = snp[0,1] #initial value
     row_num = 0
 
@@ -78,16 +78,48 @@ def make_borders(snp, sw):
 
 
 
+    #Connecting Rows (Attempt 501)
+    #Start with down-facing and so on...
+    row_num_list = []
+    for key in list(row_dict.keys()):
+        row_num_list.append(key[0])
+    max_row = max(row_num_list)
+
+    count=0
+    for row_key1 in list(row_dict.keys()):
+        row_num = row_key1[0]
+        if row_num == max_row:
+            break
+        row_orient = row_key1[1] #'u' or 'd'
+        if row_orient == 'd':
+            row_key2 = (row_num+1, 'u')
+            for indx1 in range(len(row_dict[row_key1])):
+                voxel1 = row_dict[row_key1][indx1]
+                x1 = voxel1[0]
+                y1 = voxel1[1]
+                for indx2 in range(len(row_dict[row_key2])):
+                    voxel2 = row_dict[row_key2][indx2]
+                    x2, y2 = voxel2[0], voxel2[1]
+
+                    #case 1
+                    if abs(x2-x1)-side<=.0001 and x2>x1 and indx2 != 0: #new point is to da right
+                        count +=1
+                        voxel2 = row_dict[row_key2][indx2-1]
+                        segment = [[x1,y1],[x2,y2]]
+                        border_list.append([segment, voxel1, voxel2])
 
 
-    '''The Row-to-row Borders''' #make sure last one doesn't call an errors
+    """
+    #Connecting Borders (Slanted Row to Row)
     for row in row_dict.keys():
-        if row[1] == 'd': #dealing with down triangles"range((len(row_dict.keys())-len(row_dict.keys())%2)/2): #for every row (accounts for up and down hence the modulus)" <-- nevermid, ditched this format (too much work)
+        row_num = row[0]
+        row_orient = row[1] #'u' or 'd'
+        if row_orient == 'd':
             for row1indx in range(len(row_dict[row])):#the row1indx is just the index of that row, just to make it easier for Grayson
                 if (row[0]+1, 'u') in row_dict.keys():
                     for row2indx in range(len(row_dict[(row[0]+1, "u")])): #testing points in next row which are up triangless
                         bottom_key = (row[0] +1, "u") #just for ease on the eyes
-                        if abs(row_dict[bottom_key][row2indx][0]-row_dict[row][row1indx][0]) <= 1.01*sw/2: #if the two points are within the desired side width (think right triangles)
+                        if abs(row_dict[bottom_key][row2indx][0]-row_dict[row][row1indx][0]) <= 1.01*side/2: #if the two points are within the desired side width (think right triangles)
                             if row_dict[row][row1indx][0] - row_dict[bottom_key][row2indx][0] <= 0: #the bottom row's point is to the left
                                 if row1indx != 0: #the point is not the first in the index
                                     segment = list([row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]])
@@ -106,36 +138,46 @@ def make_borders(snp, sw):
                             break #break to save computing time
 
     print("Check 1: Row-to-Row a-ok")
+    """
 
 
 
 
-
-
-    '''The Same-Row (i.e. horizontal) Borders'''
+    #The Same-Row (i.e. horizontal) Borderss
     for row in row_dict.keys():
         if row[1] == 'u':
-            for i in range(len(row_dict[row])-1): #-1 to account for the last edge
-                x = row_dict[row]
-                y = x[i]
-                z = y[0:2]
-
-                segment = list([row_dict[row][i][0:2],        row_dict[row][i][0:2]])
-                border_list.append( [ segment, row_dict[row][i], row_dict[(row[0], "d")][i]])
-                #border_list.append( [ [row_dict[row][i][0:2],        row_dict[row][i][0:2]],                row_dict[row][(row[0], "d")]])
-
-                #border_list.append( [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
-                #######Something went wrong here.................................................................
-                #based on border_list.append( [ [row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]] , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
+            row_num = row[0]
+            for voxel1 in row_dict[row]:
+                x1,y1 = voxel1[0], voxel1[1]
+                for voxel2 in row_dict[row_num, 'd']:
+                    if voxel2[0] == x1 and voxel2[1] == y1:
+                        x2,y2 = voxel2[0]+side, voxel2[1]
+                        segment = [[x1,y1], [x2,y2]]
+                        border_list.append([segment, list(voxel1), list(voxel2)])
+                        break #for time
 
     print("Check 2: Same-Row okeedokee")
 
 
 
 
-
+    print(list(row_dict.keys())[0])
+    print(list(row_dict.keys())[1])
     '''The Top and Bottom Edges'''
-    if (0, "u") in row_dict.keys():
+    if (0, "u") in list(row_dict.keys()):
+        row = (0, 'u')
+        for voxel in row_dict[row]:
+            x1 = voxel[0]
+            y1 = voxel[1]
+            x2 = voxel[0] + side/2
+            y2 = voxel[1] + side*np.sqrt(3)/2
+            x3 = x1 +side/2
+            y3 = y1
+            segment1 = [[x1,y1], [x2,y2]]
+            segment2 = [[x2,y2], [x3,y3]]
+            outside_edges.append([segment1, voxel])
+            outside_edges.append([segment2, voxel])
+
         for i in range(len(row_dict[row])):
             point = row_dict[(0, "u")][i][0:2]
             sl = row_dict[(0, "u")][i][4] #generation number
@@ -146,7 +188,35 @@ def make_borders(snp, sw):
             #outside_edges.append( [ right_line, row_dict[(0, "u")][i]])
     print("Check 3: Top and Bottom doin mighty fine")
 
-    """
+
+    return border_list, outside_edges
+
+
+######################################################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
     blah = [] #sorry, coulldn't think of a name
     for term in row_dict.keys():
         blah.append(term[0]) #row number
@@ -156,12 +226,12 @@ def make_borders(snp, sw):
         left_line =  [ [point, [point[0] + sl/2, point[1] - sl*np.sqrt(3)/2]] ]
         right_line = [ [[point[0] + sl/2, point[1] - sl*np.sqrt(3)/2]], [point[0] + sl, point[1]] ]
 
-        outside_edges = np.append(outside_edges, [ left_line, row_dict[(max(blah), "d")][i]])
-        outside_edges = np.append(outside_edges, [ right_line, row_dict[(max(blah), "d")][i]])
-    """
+        outside_edges.append( [ left_line, row_dict[(max(blah), "d")][i]])
+        outside_edges.append( [ right_line, row_dict[(max(blah), "d")][i]])
 
-    return border_list, outside_edges
 
+
+"""
 '''
 def run_border_test():
     sw, snp = read_mic_file("395z0.mic.LBFS")

@@ -1219,6 +1219,8 @@ def run():
         m.plot_mic_patches(plottype_i,conf_f,1,False,[])
     return
 
-#run()
+should_run = input("Would you like to run MicFileTool?[y/n] :")
+if should_run.lower() == 'y':
+    run()
 #stuff = np.load("Au_100x100_0.0001.npy")
 #print(stuff)
