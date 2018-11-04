@@ -101,45 +101,20 @@ def make_borders(snp, sw):
                     voxel2 = row_dict[row_key2][indx2]
                     x2, y2 = voxel2[0], voxel2[1]
 
-                    #case 1
-                    if abs(x2-x1)-side<=.0001 and x2>x1 and indx2 != 0: #new point is to da right
+                    #case 1, to the right
+                    if abs(x2-x1)-side <=.0001 and x2>x1 and indx2 != 0 and indx1!=0: #new point is to da right
                         count +=1
                         voxel2 = row_dict[row_key2][indx2-1]
                         segment = [[x1,y1],[x2,y2]]
                         border_list.append([segment, voxel1, voxel2])
 
-
-    """
-    #Connecting Borders (Slanted Row to Row)
-    for row in row_dict.keys():
-        row_num = row[0]
-        row_orient = row[1] #'u' or 'd'
-        if row_orient == 'd':
-            for row1indx in range(len(row_dict[row])):#the row1indx is just the index of that row, just to make it easier for Grayson
-                if (row[0]+1, 'u') in row_dict.keys():
-                    for row2indx in range(len(row_dict[(row[0]+1, "u")])): #testing points in next row which are up triangless
-                        bottom_key = (row[0] +1, "u") #just for ease on the eyes
-                        if abs(row_dict[bottom_key][row2indx][0]-row_dict[row][row1indx][0]) <= 1.01*side/2: #if the two points are within the desired side width (think right triangles)
-                            if row_dict[row][row1indx][0] - row_dict[bottom_key][row2indx][0] <= 0: #the bottom row's point is to the left
-                                if row1indx != 0: #the point is not the first in the index
-                                    segment = list([row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]])
-                                    border_list.append( [ segment , row_dict[row][row1indx-1], row_dict[bottom_key][row2indx]])
-                                    #                                      ^Line Segment                                                         ^Left/Upper Voxel          ^Lower/Right Voxel
-                                else: #if first index, it is a left edge
-                                    segment =  list([row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]])
-                                    outside_edges.append( [segment, row_dict[bottom_key][row2indx]])
-                            else: #bottom row index to the right
-                                if row2indx != len(row_dict[(row[0] + 1, 'd')])-1: #the point is not the last in the index
-                                    segment = list([row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]])
-                                    border_list.append( [segment  , row_dict[bottom_key][row2indx-1], row_dict[row][row1indx]])
-                                else: #iif last index, it is a right edge
-                                    segment =  list([row_dict[row][row1indx][0:2], row_dict[bottom_key][row2indx][0:2]])
-                                    outside_edges.append( [segment , row_dict[bottom_key][row2indx-1]])
-                            break #break to save computing time
-
+                    #case 2, to the left
+                    elif abs(x2-x1)-side <=.0001 and x2<x1 and indx1 != 0 and indx2!=0: #new point is to da right
+                        count +=1
+                        voxel1 = row_dict[row_key1][indx1-1]
+                        segment = [[x1,y1],[x2,y2]]
+                        border_list.append([segment, voxel1, voxel2])
     print("Check 1: Row-to-Row a-ok")
-    """
-
 
 
 
@@ -159,11 +134,7 @@ def make_borders(snp, sw):
     print("Check 2: Same-Row okeedokee")
 
 
-
-
-    print(list(row_dict.keys())[0])
-    print(list(row_dict.keys())[1])
-    '''The Top and Bottom Edges'''
+    #The Top Edges
     if (0, "u") in list(row_dict.keys()):
         row = (0, 'u')
         for voxel in row_dict[row]:
@@ -186,7 +157,17 @@ def make_borders(snp, sw):
 
             #outside_edges.append( [ left_line, row_dict[(0, "u")][i]])
             #outside_edges.append( [ right_line, row_dict[(0, "u")][i]])
-    print("Check 3: Top and Bottom doin mighty fine")
+    print("Check 3: Top doin mighty fine")
+
+    #The Bottom Edges
+
+
+
+    #The Left Edges
+
+
+
+    #The Right Edges
 
 
     return border_list, outside_edges
