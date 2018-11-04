@@ -319,11 +319,26 @@ def make_square_borders(old_smd):
 
     print("Same-Row okeedokee")
 
-
     return border_list, outside_edges
 
 
-######################################################################################################################################################
+def color_borders(border_list, function, minval=0, maxval =1):
+    '''
+    return alpha_values for border lines
+    border_list in the form [segment, voxel1, voxel2]
+    default alpha is 0
+    return: alpha_values
+    '''
+    alpha_list = []
+    for border in border_list:
+        value1 = function(border[1])
+        value2 = function(border[2])
+        if abs(value1-value2) <= maxval and abs(value1-value2) >= minval:
+            alpha_list.append(1)
+        else:
+            alpha_list.append(0)
+
+    return alpha_list
 
 
 
