@@ -9,7 +9,7 @@ import VoxelBorders
 import matplotlib.pyplot as plt
 from matplotlib import collections as mc
 sw, snp = MicFileTool.read_mic_file("395z0.mic.LBFS")
-border_list, outside_edges = VoxelBorders.make_borders(snp,sw)
+border_list, outside_edges = VoxelBorders.make_triangle_borders(snp,sw)
 
 border_lines = []
 edges = []

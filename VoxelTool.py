@@ -275,7 +275,7 @@ class VoxelClick():
         Col 6-8 orientation
         Col 9  Confidence
     '''
-    def __init__(self, fig, snp, sw, Mic):
+    def __init__(self, fig, snp, sw, mic):
         '''
         Canvas figure, snp data, base sidewdth
         '''
@@ -283,7 +283,7 @@ class VoxelClick():
         self.sw = sw #base generation for triangles
         self.fig = fig
         self.size = self.sw/2**(snp[1,4])
-        self.mic = Mic
+        self.mic = mic
 
     def onclick(self, event):
         if event.xdata == None or event.ydata == None:

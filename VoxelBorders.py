@@ -27,7 +27,7 @@ class border():
         self.luvoxel = luvoxel
         self.rdvoxel = rdvoxel
 
-def make_borders(snp, sw):
+def make_triangle_borders(snp, sw):
     '''
     Makes Triangular Borders for Legacy Formatted .mic data
     Returns two border lists:
@@ -75,16 +75,16 @@ def make_borders(snp, sw):
     border_list = [] #in the form [line segment, left/up voxel, right/down voxel]
     outside_edges = [] #these are just outside borders in the form [line segment, voxel]
 
-
-
-
-    #Connecting Rows (Attempt 501)
-    #Start with down-facing and so on...
     row_num_list = []
     for key in list(row_dict.keys()):
         row_num_list.append(key[0])
     max_row = max(row_num_list)
 
+
+
+
+    #Connecting Rows (Attempt 501)
+    #Start with down-facing and so on...
     count=0
     for row_key1 in list(row_dict.keys()):
         row_num = row_key1[0]
@@ -125,7 +125,7 @@ def make_borders(snp, sw):
             for voxel1 in row_dict[row]:
                 x1,y1 = voxel1[0], voxel1[1]
                 for voxel2 in row_dict[row_num, 'd']:
-                    if voxel2[0] == x1 and voxel2[1] == y1:
+                    if abs(voxel2[0]-x1)<.0001 and abs(voxel2[1]-y1) <= .001:
                         x2,y2 = voxel2[0]+side, voxel2[1]
                         segment = [[x1,y1], [x2,y2]]
                         border_list.append([segment, list(voxel1), list(voxel2)])
@@ -136,41 +136,106 @@ def make_borders(snp, sw):
 
     #The Top Edges
     if (0, "u") in list(row_dict.keys()):
+        print("Doin Top Edges")
         row = (0, 'u')
         for voxel in row_dict[row]:
             x1 = voxel[0]
             y1 = voxel[1]
             x2 = voxel[0] + side/2
             y2 = voxel[1] + side*np.sqrt(3)/2
-            x3 = x1 +side/2
+            x3 = x1 + side
             y3 = y1
             segment1 = [[x1,y1], [x2,y2]]
             segment2 = [[x2,y2], [x3,y3]]
             outside_edges.append([segment1, voxel])
             outside_edges.append([segment2, voxel])
 
-        for i in range(len(row_dict[row])):
-            point = row_dict[(0, "u")][i][0:2]
-            sl = row_dict[(0, "u")][i][4] #generation number
-            #left_line =  list([point, [point[0] + sl/2, point[1] + sl*np.sqrt(3)/2]])
-            #right_line = list([ [[point[0] + sl/2, point[1] + sl*np.sqrt(3)/2]], [point[0] + sl, point[1]] ])
-
-            #outside_edges.append( [ left_line, row_dict[(0, "u")][i]])
-            #outside_edges.append( [ right_line, row_dict[(0, "u")][i]])
     print("Check 3: Top doin mighty fine")
 
-    #The Bottom Edges
 
+
+    #The Bottom Edges
+    if (max_row, 'd') in list(row_dict.keys()):
+        row = (max_row, 'd')
+        print("Doin Bottom Row")
+        for voxel in row_dict[row]:
+            x1 = voxel[0]
+            y1 = voxel[1]
+            x2 = voxel[0] + side/2
+            y2 = voxel[1] - side*np.sqrt(3)/2
+            x3 = x1 + side
+            y3 = y1
+            segment1 = [[x1,y1], [x2,y2]]
+            segment2 = [[x2,y2], [x3,y3]]
+            outside_edges.append([segment1, voxel])
+            outside_edges.append([segment2, voxel])
+    print("Bottom Edges Okeedokee")
 
 
     #The Left Edges
-
+    for row in list(row_dict.keys()):
+        voxel = row_dict[row][0]
+        if row[1] == 'u':
+            x1 = voxel[0]
+            y1 = voxel[1]
+            x2 = x1 + side/2
+            y2 = y1 + np.sqrt(3)/2*side
+            segment1 = [[x1,y1], [x2,y2]]
+            segment2 = [[x2,y2], [x3,y3]]
+            outside_edges.append([segment1, voxel])
+            outside_edges.append([segment2, voxel])
+        if row[1] == 'd':
+            x1 = voxel[0]
+            y1 = voxel[1]
+            x2 = x1 + side/2
+            y2 = y1 - np.sqrt(3)/2*side
+            segment1 = [[x1,y1], [x2,y2]]
+            segment2 = [[x2,y2], [x3,y3]]
+            outside_edges.append([segment1, voxel])
+            outside_edges.append([segment2, voxel])
+    print("Left Edges Lookin' Fine")
 
 
     #The Right Edges
-
+    for row in list(row_dict.keys()):
+        voxel = row_dict[row][-1]
+        if row[1] == 'u':
+            x1 = voxel[0]
+            y1 = voxel[1]
+            x2 = x1 + side/2
+            y2 = y1 + np.sqrt(3)/2*side
+            segment1 = [[x1,y1], [x2,y2]]
+            segment2 = [[x2,y2], [x3,y3]]
+            outside_edges.append([segment1, voxel])
+            outside_edges.append([segment2, voxel])
+        if row[1] == 'd':
+            x1 = voxel[0]
+            y1 = voxel[1]
+            x2 = x1 + side/2
+            y2 = y1 - np.sqrt(3)/2*side
+            segment1 = [[x1,y1], [x2,y2]]
+            segment2 = [[x2,y2], [x3,y3]]
+            outside_edges.append([segment1, voxel])
+            outside_edges.append([segment2, voxel])
+    print("Right Edges All Aboard")
 
     return border_list, outside_edges
+
+
+
+def make_square_borders(smd, sw):
+    '''
+    plot the square mic data
+    image already inverted, x-horizontal, y-vertical, x dow to up, y: left to right
+    :param squareMicData: [NVoxelX,NVoxelY,10], each Voxel conatains 10 columns:
+            0-2: voxelpos [x,y,z]
+            3-5: euler angle
+            6: hitratio
+            7: maskvalue. 0: no need for recon, 1: active recon region
+            8: voxelsize
+            9: additional information
+    :return:
+    '''
 
 
 ######################################################################################################################################################
