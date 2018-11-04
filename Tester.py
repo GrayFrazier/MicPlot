@@ -12,6 +12,7 @@ import numpy as np
 
 
 def run_triangle():
+    #sw, snp = MicFileTool.read_mic_file("Al_final_z1_refit.mic")
     sw, snp = MicFileTool.read_mic_file("395z0.mic.LBFS")
     border_list, outside_edges = VoxelBorders.make_triangle_borders(snp,sw)
 
@@ -33,9 +34,19 @@ def run_triangle():
     ax.set_ylim((-1,1))
     plt.show()
 
+def write_smd(mic_data):
+    smd = np.load(mic_data)[0]
+    fname = mic_data+".txt"
+    file = open(fname, "w")
+    for line in smd:
+        file.write(str(line)+"\n")
+    file.close()
+
+
 def run_square():
-    smd = np.load("SearchBatchSize_13000_100x100_0.01.npy")[0]
-    print (smd)
+    smd = np.load("SearchBatchSize_13000_100x100_0.01.npy")
+    #write_smd("SearchBatchSize_13000_100x100_0.01.npy")
+    #print (smd)
     border_list, outside_edges = VoxelBorders.make_square_borders(smd)
 
     border_lines = []
@@ -56,5 +67,6 @@ def run_square():
     ax.set_ylim((-1,1))
     plt.show()
 
-run_triangle()
+
+#run_triangle()
 run_square()

@@ -93,6 +93,8 @@ def make_triangle_borders(snp, sw):
         row_orient = row_key1[1] #'u' or 'd'
         if row_orient == 'd':
             row_key2 = (row_num+1, 'u')
+            if row_key2 not in list(row_dict.keys()):
+                break
             for indx1 in range(len(row_dict[row_key1])):
                 voxel1 = row_dict[row_key1][indx1]
                 x1 = voxel1[0]
@@ -172,7 +174,7 @@ def make_triangle_borders(snp, sw):
     print("Bottom Edges Okeedokee")
 
     side = sw/2**snp[0][4]
-
+    """
     #The Left Edges
     for row in list(row_dict.keys()):
         voxel = row_dict[row][0]
@@ -196,7 +198,7 @@ def make_triangle_borders(snp, sw):
             outside_edges.append([segment1, voxel])
             outside_edges.append([segment2, voxel])
     print("Left Edges Lookin' Fine")
-
+    """
     """
     #The Right Edges
     for row in list(row_dict.keys()):
@@ -225,7 +227,7 @@ def make_triangle_borders(snp, sw):
 
 
 
-def make_square_borders(smd):
+def make_square_borders(old_smd):
     '''
     Makes square borders
     image already inverted, x-horizontal, y-vertical, x dow to up, y: left to right
@@ -240,14 +242,19 @@ def make_square_borders(smd):
         border_list #in the form [line segment, left/up voxel, right/down voxel]
         outside_edges #these are just outside borders in the form [line segment, voxel]
     '''
-
+    #squareMicData organizes by x values, but I shall alter it b/c I am lazy and it is easier to make borders
+    smd = []
+    for column_list in old_smd:
+        for voxel in column_list:
+            smd.append(list(voxel))
+    print(smd[0])
     side = smd[0][8]
-    y_value = smd[0,1] #initial value
+    y_value = smd[0][1] #initial value
     row_num = 0
 
     row_dict = dict()
     row_y_values = []
-
+    count = 0
     #making rows to later make a border
     for voxel in smd:
         if round(voxel[1], 6) in row_y_values:
@@ -262,6 +269,7 @@ def make_square_borders(smd):
             row_dict[indx] = sorted(row_dict[indx], key=lambda k: [k[0], k[1], k[2]])
         else:
             row_dict[indx] = [voxel]
+            count += 1
     print("row-dict is alive!")
 
     row_keys = row_dict.keys()

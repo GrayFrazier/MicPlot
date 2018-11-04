@@ -18,7 +18,7 @@ April 10, 2018
 import numpy as np
 import matplotlib
 #matplotlib.use('GTKAgg')
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as pltf
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 from matplotlib.collections import PolyCollection
