@@ -31,8 +31,8 @@ def make_triangle_borders(snp, sw):
     '''
     Makes Triangular Borders for Legacy Formatted .mic data
     Returns two border lists:
-        border_list = np.array([]) #in the form [line segment, left/up voxel, right/down voxel]
-        outside_edges = np.array([]) #these are just outside borders in the form [line segment, voxel]
+        border_list #in the form [line segment, left/up voxel, right/down voxel]
+        outside_edges #these are just outside borders in the form [line segment, voxel]
     '''
     side = sw/2**snp[0,4]
     y_value = snp[0,1] #initial value
@@ -56,14 +56,14 @@ def make_triangle_borders(snp, sw):
         if voxel[3] ==1: #triangle up
             if (indx, 'u') in row_dict.keys():
                 row_dict[(indx, 'u')].append(voxel)
-                row_dict[(indx, 'u')] = sorted( row_dict[(indx, 'u')], key=lambda k: [k[0], k[1], k[3]])
+                row_dict[(indx, 'u')] = sorted( row_dict[(indx, 'u')], key=lambda k: [k[0], k[1], k[2]])
             else:
                 row_dict[indx, 'u'] = [voxel]
 
         if voxel[3] == 2: #triangle down
             if (indx, 'd') in row_dict.keys():
                 row_dict[(indx, 'd')].append(voxel)
-                row_dict[(indx, 'd')] = sorted( row_dict[(indx, 'd')], key=lambda k: [k[0], k[1], k[3]])
+                row_dict[(indx, 'd')] = sorted( row_dict[(indx, 'd')], key=lambda k: [k[0], k[1], k[2]])
             else:
                 row_dict[indx, 'd'] = [voxel]
 
@@ -80,7 +80,7 @@ def make_triangle_borders(snp, sw):
         row_num_list.append(key[0])
     max_row = max(row_num_list)
 
-
+    print("row_dict is alive!")
 
 
     #Connecting Rows (Attempt 501)
@@ -114,7 +114,7 @@ def make_triangle_borders(snp, sw):
                         voxel1 = row_dict[row_key1][indx1-1]
                         segment = [[x1,y1],[x2,y2]]
                         border_list.append([segment, voxel1, voxel2])
-    print("Check 1: Row-to-Row a-ok")
+    print("Row-to-Row a-ok")
 
 
 
@@ -131,7 +131,7 @@ def make_triangle_borders(snp, sw):
                         border_list.append([segment, list(voxel1), list(voxel2)])
                         break #for time
 
-    print("Check 2: Same-Row okeedokee")
+    print("Same-Row okeedokee")
 
 
     #The Top Edges
@@ -150,7 +150,7 @@ def make_triangle_borders(snp, sw):
             outside_edges.append([segment1, voxel])
             outside_edges.append([segment2, voxel])
 
-    print("Check 3: Top doin mighty fine")
+    print("Top doin mighty fine")
 
 
 
@@ -171,6 +171,7 @@ def make_triangle_borders(snp, sw):
             outside_edges.append([segment2, voxel])
     print("Bottom Edges Okeedokee")
 
+    side = sw/2**snp[0][4]
 
     #The Left Edges
     for row in list(row_dict.keys()):
@@ -179,23 +180,24 @@ def make_triangle_borders(snp, sw):
             x1 = voxel[0]
             y1 = voxel[1]
             x2 = x1 + side/2
-            y2 = y1 + np.sqrt(3)/2*side
+            y2 = y1 + 3**.5/2*side
             segment1 = [[x1,y1], [x2,y2]]
             segment2 = [[x2,y2], [x3,y3]]
+            print(segment1)                                               #Fix here, something has gone wrong, but it compiles at least...lol
             outside_edges.append([segment1, voxel])
             outside_edges.append([segment2, voxel])
         if row[1] == 'd':
             x1 = voxel[0]
             y1 = voxel[1]
             x2 = x1 + side/2
-            y2 = y1 - np.sqrt(3)/2*side
+            y2 = y1 - 3**.5/2*side
             segment1 = [[x1,y1], [x2,y2]]
             segment2 = [[x2,y2], [x3,y3]]
             outside_edges.append([segment1, voxel])
             outside_edges.append([segment2, voxel])
     print("Left Edges Lookin' Fine")
 
-
+    """
     #The Right Edges
     for row in list(row_dict.keys()):
         voxel = row_dict[row][-1]
@@ -218,24 +220,99 @@ def make_triangle_borders(snp, sw):
             outside_edges.append([segment1, voxel])
             outside_edges.append([segment2, voxel])
     print("Right Edges All Aboard")
-
+    """
     return border_list, outside_edges
 
 
 
-def make_square_borders(smd, sw):
+def make_square_borders(smd):
     '''
-    plot the square mic data
+    Makes square borders
     image already inverted, x-horizontal, y-vertical, x dow to up, y: left to right
-    :param squareMicData: [NVoxelX,NVoxelY,10], each Voxel conatains 10 columns:
+    squareMicData: [NVoxelX,NVoxelY,10], each Voxel conatains 10 columns:
             0-2: voxelpos [x,y,z]
             3-5: euler angle
             6: hitratio
             7: maskvalue. 0: no need for recon, 1: active recon region
             8: voxelsize
             9: additional information
-    :return:
+    Returns two border lists:
+        border_list #in the form [line segment, left/up voxel, right/down voxel]
+        outside_edges #these are just outside borders in the form [line segment, voxel]
     '''
+
+    side = smd[0][8]
+    y_value = smd[0,1] #initial value
+    row_num = 0
+
+    row_dict = dict()
+    row_y_values = []
+
+    #making rows to later make a border
+    for voxel in smd:
+        if round(voxel[1], 6) in row_y_values:
+            indx = row_y_values.index(round(voxel[1],6))
+        else:
+            row_y_values.append(round(voxel[1], 6))
+            row_y_values.sort()
+            indx = len(row_y_values)-1 #last index
+
+        if indx in row_dict.keys():
+            row_dict[indx].append(voxel)
+            row_dict[indx] = sorted(row_dict[indx], key=lambda k: [k[0], k[1], k[2]])
+        else:
+            row_dict[indx] = [voxel]
+    print("row-dict is alive!")
+
+    row_keys = row_dict.keys()
+    row_keys = list(row_dict.keys())
+
+    border_list = []
+    outside_edges = []
+
+
+    max_row = 0
+    for row in list(row_dict.keys()):
+        if row >= max_row:
+            max_row = row
+
+    #Connecting Rows (Attempt 501)
+    #Start with down-facing and so on...
+    count=0
+    for row_key1 in list(row_dict.keys()):
+        if row_key1 == max_row:
+            break
+        row_key2 = row_key1 + 1
+        for indx1 in range(len(row_dict[row_key1])):
+            voxel1 = row_dict[row_key1][indx1]
+            x1, y1 = voxel1[0], voxel1[1]
+            for indx2 in range(len(row_dict[row_key2])):
+                voxel2 = row_dict[row_key2][indx2]
+                x2,y2 = voxel2[0], voxel2[1]
+                if abs(x1-x2) < .0001:
+                    segment = [[x1,y1], [x2,y2]]
+                    lvoxel = row_dict[row_key2][indx2-1]
+                    rvoxel = voxel2
+                    border_list.append([segment, lvoxel, rvoxel])
+
+
+    #The Same-Row (i.e. horizontal) Borderss
+    for row1 in row_dict.keys():
+        if row1 == max_row:
+            break
+        row2 = row1 + 1
+        for voxel1 in row_dict[row1]:
+            x1,y1 = voxel1[0], voxel2[1]
+            for voxel2 in row_dict[row2]:
+                x2,y2 = voxel2[0], voxel2[1]
+                if abs(x1-x2)-side <= .0001:
+                    segment = [[x1,y1], [x1 + side,y1]]
+                    border_list.append([segment, voxel1, voxel2])
+
+    print("Same-Row okeedokee")
+
+
+    return border_list, outside_edges
 
 
 ######################################################################################################################################################
