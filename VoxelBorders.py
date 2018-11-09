@@ -104,14 +104,14 @@ def make_triangle_borders(snp, sw):
                     x2, y2 = voxel2[0], voxel2[1]
 
                     #case 1, to the right
-                    if abs(x2-x1)-side <=.0001 and x2>x1 and indx2 != 0 and indx1!=0: #new point is to da right
+                    if abs(x2-x1)-side <=.001 and x2>x1 and indx2 != 0 and indx1!=0: #new point is to da right
                         count +=1
                         voxel2 = row_dict[row_key2][indx2-1]
                         segment = [[x1,y1],[x2,y2]]
                         border_list.append([segment, voxel1, voxel2])
 
                     #case 2, to the left
-                    elif abs(x2-x1)-side <=.0001 and x2<x1 and indx1 != 0 and indx2!=0: #new point is to da right
+                    elif abs(x2-x1)-side <=.001 and x2<x1 and indx1 != 0 and indx2!=0: #new point is to da right
                         count +=1
                         voxel1 = row_dict[row_key1][indx1-1]
                         segment = [[x1,y1],[x2,y2]]
@@ -174,7 +174,7 @@ def make_triangle_borders(snp, sw):
     print("Bottom Edges Okeedokee")
 
     side = sw/2**snp[0][4]
-    """
+    """ 
     #The Left Edges
     for row in list(row_dict.keys()):
         voxel = row_dict[row][0]

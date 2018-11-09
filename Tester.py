@@ -68,5 +68,5 @@ def run_square():
     plt.show()
 
 
-#run_triangle()
+run_triangle()
 run_square()
