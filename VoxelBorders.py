@@ -33,6 +33,14 @@ def make_triangle_borders(snp, sw):
     Returns two border lists:
         border_list #in the form [line segment, left/up voxel, right/down voxel]
         outside_edges #these are just outside borders in the form [line segment, voxel]
+
+    Legacy File Format:
+        Col 0-2 x, y, z
+        Col 3   1 = triangle pointing up, 2 = triangle pointing down
+        Col 4 generation number; triangle size = sidewidth /(2^generation number )
+        Col 5 Phase - 1 = exist, 0 = not fitted
+        Col 6-8 orientation
+        Col 9  Confidence
     '''
     side = sw/2**snp[0,4]
     y_value = snp[0,1] #initial value
@@ -82,7 +90,9 @@ def make_triangle_borders(snp, sw):
 
     print("row_dict is alive!")
 
-
+    #########################################################################################################################
+    rcount = 0
+    lcount = 0 #for debugging...
     #Connecting Rows (Attempt 501)
     #Start with down-facing and so on...
     count=0
@@ -102,20 +112,31 @@ def make_triangle_borders(snp, sw):
                 for indx2 in range(len(row_dict[row_key2])):
                     voxel2 = row_dict[row_key2][indx2]
                     x2, y2 = voxel2[0], voxel2[1]
-
+                    old_side = side
+                    side = sw/2**voxel1[4]
+                    if side != old_side:
+                        print("side different")
                     #case 1, to the right
-                    if abs(x2-x1)-side <=.001 and x2>x1 and indx2 != 0 and indx1!=0: #new point is to da right
+                    if abs(x2-x1) <= side*1.49 and x2>x1 and indx2 != 0 and indx1!=0: #new point is to da right
                         count +=1
                         voxel2 = row_dict[row_key2][indx2-1]
                         segment = [[x1,y1],[x2,y2]]
                         border_list.append([segment, voxel1, voxel2])
+                        rcount += 1
+                        if rcount ==1:
+                            print(abs(x2-x1) - side)
+
 
                     #case 2, to the left
-                    elif abs(x2-x1)-side <=.001 and x2<x1 and indx1 != 0 and indx2!=0: #new point is to da right
+                    #NOTE: changing the above to 1.49 drastically changes amount plotted...maybe use 2 ifs?
+                    elif abs(x2-x1) <= side*1.49 and x2<x1 and indx1 != 0 and indx2!=0: #new point is to da right
                         count +=1
                         voxel1 = row_dict[row_key1][indx1-1]
                         segment = [[x1,y1],[x2,y2]]
                         border_list.append([segment, voxel1, voxel2])
+                        lcount += 1
+                        if lcount ==1:
+                            print((abs(x2-x1) - side)/side)
     print("Row-to-Row a-ok")
 
 
@@ -174,7 +195,7 @@ def make_triangle_borders(snp, sw):
     print("Bottom Edges Okeedokee")
 
     side = sw/2**snp[0][4]
-    """ 
+    """
     #The Left Edges
     for row in list(row_dict.keys()):
         voxel = row_dict[row][0]
@@ -339,149 +360,3 @@ def color_borders(border_list, function, minval=0, maxval =1):
             alpha_list.append(0)
 
     return alpha_list
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-    blah = [] #sorry, coulldn't think of a name
-    for term in row_dict.keys():
-        blah.append(term[0]) #row number
-    if (max(blah), "d") in row_dict.keys():
-        point = row_dict[(max(blah), "d")][i][0:2]
-        sl = row_dict[(max(blah), "d")][i][4] #generation number
-        left_line =  [ [point, [point[0] + sl/2, point[1] - sl*np.sqrt(3)/2]] ]
-        right_line = [ [[point[0] + sl/2, point[1] - sl*np.sqrt(3)/2]], [point[0] + sl, point[1]] ]
-
-        outside_edges.append( [ left_line, row_dict[(max(blah), "d")][i]])
-        outside_edges.append( [ right_line, row_dict[(max(blah), "d")][i]])
-
-
-
-"""
-'''
-def run_border_test():
-    sw, snp = read_mic_file("395z0.mic.LBFS")
-    make_borders(snp,sw)
-
-run = input("run border test? y/n:\n")
-if run.lower() == "y":
-    run_border_test()
-'''
-"""
-
-
-def make_square_borders(SquareMic, SquareMicData):
-    '''
-    Returns a collection of borders
-    Includes the two points, and the left/up voxel and the right/down voxel
-    voxel data in form of:
-        0-2: voxelpos [x,y,z]
-        3-5: euler angle
-        6: hitratio
-        7: maskvalue. 0: no need for recon, 1: active recon region
-        8: voxelsize
-        9: additional information
-    In the form [(x,y), (x,y), left/up, right/down]
-    '''
-    #Data organized by column, row, then orientation
-
-    def make_left_side(SquareMic, data):
-        '''
-        Make left wall
-        Returns list
-        '''
-        point1 = [data[i][0], data[i][1], data[i][2]]
-        point2 = [data[i][0], data[i][1], data[i][2]]
-        left_border = [point1, point2, None, data]
-        return left_border
-
-    def make_right_side(SquareMic, data)
-        '''
-        Make right wall
-        '''
-        point1 = [data[i][0], data[i][1], data[i][2]]
-        point2 = [data[i][0], data[i][1], data[i][2]]
-        right_border = [point1, point, data, None ]
-        return right_border
-
-def order_snp(snp):
-    '''
-    Takes the points in snp data and orders it
-    Left to Right and then Top to Bottom (like reading)
-    This is already assumed in the files, but just to be safe :)
-    Assumes all z are the same
-    '''
-    snp = sorted(snp , key=lambda k: [k[1], k[0], k[3]]) #also sorts by triangle orientation (row, column, then orientation)
-    return snp
-
-#Are you bored yet?  Ha, get it?  Borders?
-#ok, I'll stop now
-
-
-def make_triangle_border(snp, sw):
-    '''
-    Used to make a dictionary of rows
-    To be implemented for triangular voxel type w/ legacy file format
-    Assume that the data is ordered by x,y,z
-
-    RowDict in the form [x, 'u'/'d'] = [voxelData]
-
-    Legacy File Format:
-    Col 0-2 x, y, z
-    Col 3   1 = triangle pointing up, 2 = triangle pointing down
-    Col 4 generation number; triangle size = sidewidth /(2^generation number )
-    Col 5 Phase - 1 = exist, 0 = not fitted
-    Col 6-8 orientation
-    Col 9  Confidence
-    '''
-
-    x = snp[0][0] #takes the first x value'
-    for voxel in snp:
-        diff = x - snp[0]
-        if voxel[3] == 1: #triangle up
-            if round(diff, 5) <= .00001:
-                row[x,]
-        if abs(voxel[0][0]-x) <= 1e-4:
-            row[x,]
-
-    #initialize values
-    y_value = snp[0,0] #initial value
-    if snp[0][3] == 1: #Pointing up
-        row = (0,'u')
-    else:
-        row = (0,'d')
-    row_dict[row] = []
-
-    #making rows to later make a border
-    for i in range(len(snp)):
-        if abs(snp[i,1] - y_value)<= .000001: #agrees with the accuracy of most mic files
-            if snp[i,3] == 1: #Triangle facing up
-               	 np.append(row_dict[(row[0], "u")], snp[i])
-
-            else:
-                row_dict[(row[0], "d")].append(snp[i])
-        else:
-            row = (row[0]+1, 'u')###change here
-            y_value = snp[i,1]
-            row_dict[row] = snp[i] #start a new row term
-"""
