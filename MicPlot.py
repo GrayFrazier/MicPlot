@@ -17,6 +17,7 @@ Eli Bendersky (eliben@gmail.com)
 License: this code is in the public domain
 Last modified: 19.01.2009
 """
+"""
 import sys, os, random
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -50,7 +51,7 @@ class AppForm(QMainWindow):
             self.statusBar().showMessage('Saved to %s' % path, 2000)
     
     def on_about(self):
-        msg = """ A demo of using PyQt with matplotlib:
+        msg = ''' A demo of using PyQt with matplotlib:
         
          * Use the matplotlib navigation bar
          * Add values to the text box and press Enter (or click "Draw")
@@ -58,7 +59,7 @@ class AppForm(QMainWindow):
          * Drag the slider to modify the width of the bars
          * Save the plot to a file using the File menu
          * Click on a bar to receive an informative message
-        """
+        '''
         QMessageBox.about(self, "About the demo", msg.strip())
     
     def on_pick(self, event):
@@ -74,8 +75,8 @@ class AppForm(QMainWindow):
         QMessageBox.information(self, "Click!", msg)
     
     def on_draw(self):
-        """ Redraws the figure
-        """
+        '''Redraws the figure
+        '''
         str = unicode(self.textbox.text())
         self.data = map(int, str.split())
         
@@ -218,3 +219,58 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""
+
+import sys
+import time
+
+import numpy as np
+
+from matplotlib.backends.qt_compat import QtCore, QtWidgets, is_pyqt5
+if is_pyqt5():
+    from matplotlib.backends.backend_qt5agg import (
+        FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
+else:
+    from matplotlib.backends.backend_qt4agg import (
+        FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
+from matplotlib.figure import Figure
+
+
+class ApplicationWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self._main = QtWidgets.QWidget()
+        self.setCentralWidget(self._main)
+        layout = QtWidgets.QVBoxLayout(self._main)
+
+        static_canvas = FigureCanvas(Figure(figsize=(5, 3)))
+        layout.addWidget(static_canvas)
+        self.addToolBar(NavigationToolbar(static_canvas, self))
+
+        dynamic_canvas = FigureCanvas(Figure(figsize=(5, 3)))
+        layout.addWidget(dynamic_canvas)
+        self.addToolBar(QtCore.Qt.BottomToolBarArea,
+                        NavigationToolbar(dynamic_canvas, self))
+
+        self._static_ax = static_canvas.figure.subplots()
+        t = np.linspace(0, 10, 501)
+        self._static_ax.plot(t, np.tan(t), ".")
+
+        self._dynamic_ax = dynamic_canvas.figure.subplots()
+        self._timer = dynamic_canvas.new_timer(
+            100, [(self._update_canvas, (), {})])
+        self._timer.start()
+
+    def _update_canvas(self):
+        self._dynamic_ax.clear()
+        t = np.linspace(0, 10, 101)
+        # Shift the sinusoid as a function of time.
+        self._dynamic_ax.plot(t, np.sin(t + time.time()))
+        self._dynamic_ax.figure.canvas.draw()
+
+
+if __name__ == "__main__":
+    qapp = QtWidgets.QApplication(sys.argv)
+    app = ApplicationWindow()
+    app.show()
+    qapp.exec_()
