@@ -42,12 +42,19 @@ def write_smd(mic_data):
         file.write(str(line)+"\n")
     file.close()
 
+def angle_is_close(ang_list1, ang_list2):
+	alpha = 1
+	for i in range(len(ang_list1)):
+		if abs( ang_list1[i]-ang_list2[i]) >=1:
+			alpha = 0
+	return alpha
 
 def run_square():
     smd = np.load("SearchBatchSize_13000_100x100_0.01.npy")
     #write_smd("SearchBatchSize_13000_100x100_0.01.npy")
     #print (smd)
     border_list, outside_edges = VoxelBorders.make_square_borders(smd)
+    print("border list is:", border_list[0])
 
     border_lines = []
     edges = []
@@ -55,9 +62,18 @@ def run_square():
         border_lines.append(border[0])
     for edge in outside_edges:
         edges.append(edge[0])
-
+	
+    alpha_list = []
+    for border in border_lines:
+        print("border is", border)
+        voxel1 = border[1]
+        voxel2 = border[2]
+        angs1 = voxel1[6:9]
+        angs2 = voxel2[6:9]
+        alpha_list.append(angle_is_close(angs1, angs2))
     border_collection = mc.LineCollection(border_lines)
     edge_collection = mc.LineCollection(edges)
+    border_collection.set_alpha(alpha_list)
     ax = plt.axes()
     ax.add_collection(border_collection)
 
@@ -68,5 +84,5 @@ def run_square():
     plt.show()
 
 
-run_triangle()
+#run_triangle()
 run_square()
