@@ -43,18 +43,21 @@ def write_smd(mic_data):
     file.close()
 
 def angle_is_close(ang_list1, ang_list2):
-	alpha = 1
-	for i in range(len(ang_list1)):
-		if abs( ang_list1[i]-ang_list2[i]) >=1:
-			alpha = 0
-	return alpha
+    color = [1,1,1]
+    for i in range(len(ang_list1)):
+        ang1 = ang_list1[i]
+        ang2 = ang_list2[i]
+        if abs(ang1-ang2) > 1:
+            color = [0,0,0]
+            break
+
+    return color
 
 def run_square():
     smd = np.load("SearchBatchSize_13000_100x100_0.01.npy")
     #write_smd("SearchBatchSize_13000_100x100_0.01.npy")
     #print (smd)
     border_list, outside_edges = VoxelBorders.make_square_borders(smd)
-    print("border list is:", border_list[0])
 
     border_lines = []
     edges = []
@@ -62,18 +65,18 @@ def run_square():
         border_lines.append(border[0])
     for edge in outside_edges:
         edges.append(edge[0])
-	
-    alpha_list = []
-    for border in border_lines:
-        print("border is", border)
-        voxel1 = border[1]
-        voxel2 = border[2]
-        angs1 = voxel1[6:9]
-        angs2 = voxel2[6:9]
-        alpha_list.append(angle_is_close(angs1, angs2))
+
+    c = [] #to colorize
+    for indx in range(len(border_lines)):
+        border = border_lines[indx]
+        voxel1 = border_list[indx][1]
+        voxel2 = border_list[indx][2]
+        angs1 = voxel1[3:6]
+        angs2 = voxel2[3:6]
+        c.append(angle_is_close(angs1, angs2))
     border_collection = mc.LineCollection(border_lines)
     edge_collection = mc.LineCollection(edges)
-    border_collection.set_alpha(alpha_list)
+    border_collection.set_color(c)
     ax = plt.axes()
     ax.add_collection(border_collection)
 

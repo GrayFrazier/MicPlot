@@ -338,7 +338,13 @@ def make_square_borders(old_smd):
                     segment = [[x1,y1], [x1 + side,y1]]
                     border_list.append([segment, voxel1, voxel2])
 
+
     print("Same-Row okeedokee")
+
+    #quick check to make formatting went a-ok
+    for border in border_list:
+        if len(border) < 3:
+            print(border_list.index(border))
 
     return border_list, outside_edges
 
@@ -350,6 +356,8 @@ def color_borders(border_list, function, minval=0, maxval =1):
     default alpha is 0
     return: alpha_values
     '''
+
+
     alpha_list = []
     for border in border_list:
         value1 = function(border[1])
@@ -360,3 +368,18 @@ def color_borders(border_list, function, minval=0, maxval =1):
             alpha_list.append(0)
 
     return alpha_list
+
+
+def angle_is_close(ang_list1, ang_list2):
+    '''
+    quick lazy way to color
+    '''
+    color = [1,1,1]
+    for i in range(len(ang_list1)):
+        ang1 = ang_list1[i]
+        ang2 = ang_list2[i]
+        if abs(ang1-ang2) > 1:
+            color = [0,0,0]
+            break
+
+    return color
