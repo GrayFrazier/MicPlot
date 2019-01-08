@@ -537,14 +537,18 @@ def plot_square_mic(SquareMic,squareMicData, minHitRatio,coords, misor_thresh):
 
 
     border_colors = []
+    new_borders = [] #the borders to be chosen
     for i in range(len(border_lines)):
         border = border_lines[i]
         voxel1 = border_list[i][1]
         voxel2 = border_list[i][2]
         angs1 = voxel1[3:6]
         angs2 = voxel2[3:6]
-        border_colors.append(VoxelBorders.angle_is_close(angs1, angs2))
-    border_collection = mc.LineCollection(border_lines)
+        color = VoxelBorders.angle_is_close(angs1,angs2)
+        if color == [0,0,0]:
+            border_colors.append(color)
+            new_borders.append(border_lines[i])
+    border_collection = mc.LineCollection(new_borders)
     edge_collection = mc.LineCollection(edges)
     border_collection.set_color(border_colors)
     border_collection.set_zorder(20)
@@ -862,10 +866,3 @@ def run():
             plottype_i = 2
         m.plot_mic_patches(plottype_i,conf_f,1,False,[])
     return
-
-should_run = input("Would you like to run MicFileTool?[y/n] :")
-if should_run.lower() == 'y':
-    run()
-
-#stuff = np.load("Au_100x100_0.0001.npy")
-#print(stuff)

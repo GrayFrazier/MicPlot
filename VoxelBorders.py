@@ -350,6 +350,7 @@ def make_square_borders(old_smd):
 
 
 def color_borders(border_list, function, minval=0, maxval =1):
+    #maybe try **param arguments and stuf...?
     '''
     return alpha_values for border lines
     border_list in the form [segment, voxel1, voxel2]
