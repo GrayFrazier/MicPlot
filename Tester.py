@@ -32,6 +32,34 @@ def run_triangle():
     fig = plt.gcf()
     ax.set_xlim((-1,1))
     ax.set_ylim((-1,1))
+    #plt.show()
+
+    ############################################################################
+    border_lines = []
+    edges = []
+    for border in border_list:
+        border_lines.append(border[0])
+    for edge in outside_edges:
+        edges.append(edge[0])
+
+    c = [] #to colorize
+    for indx in range(len(border_lines)):
+        border = border_lines[indx]
+        voxel1 = border_list[indx][1]
+        voxel2 = border_list[indx][2]
+        angs1 = voxel1[3:6]
+        angs2 = voxel2[3:6]
+        c.append(angle_is_close(angs1, angs2))
+    border_collection = mc.LineCollection(border_lines)
+    edge_collection = mc.LineCollection(edges)
+    border_collection.set_color(c)
+    ax = plt.axes()
+    ax.add_collection(border_collection)
+
+
+    fig = plt.gcf()
+    ax.set_xlim((-1,1))
+    ax.set_ylim((-1,1))
     plt.show()
 
 def write_smd(mic_data):
@@ -47,7 +75,7 @@ def angle_is_close(ang_list1, ang_list2):
     for i in range(len(ang_list1)):
         ang1 = ang_list1[i]
         ang2 = ang_list2[i]
-        if abs(ang1-ang2) > 1:
+        if abs(ang1-ang2) > .9:
             color = [0,0,0]
             break
 
@@ -87,5 +115,5 @@ def run_square():
     plt.show()
 
 
-#run_triangle()
-run_square()
+run_triangle()
+#run_square()

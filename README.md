@@ -1,10 +1,20 @@
-
 # MicPlot
 ! [alt text] (https://pbs.twimg.com/profile_images/909776348490665985/CGYKLZLV_400x400.jpg)
 <img src = "https://pbs.twimg.com/profile_images/909776348490665985/CGYKLZLV_400x400.jpg">
 A python tool for plotting .mic files which display data for polycrystalline materials.  Based in Carnegie Mellon University Physics/Material Science Department under Professor Robert M. Suter.
 
+##Authors:
+Grayson Frazier (Carnegie Mellon)
+Doyee Byun (Carnegie Mellon/Vigina Tech)
+He Liu (Carnegie Mellon)
+Yufeng Shen (Carnegie Mellon)
+
 ## How to Use:
+The interface is within **MicPlot.py**.  Simply run this program and follow the onscreen prompts to plot files.
+
+There are two different file formats: square and triangular plots.
+
+
 Use the PlotMic.py tool to plot the .mic file to display.  Upon doing so, the entire image will appear on your display.  To replot a specific grain, click on the said grain.  Doing so will show the average information about that area. To replot, simply press "enter" which will prompt a new window with the more specific grain.  Doing so will enhance the differences in the grain.
 
 <--- Maybe add picture? -->
