@@ -710,6 +710,46 @@ class MicFile():
             ax.set_ylim([ymin -.1 ,ymin + side_length +.1])
             #note, previously, -.6<=x,y<=.6
 
+            #time for da borders
+            import VoxelBorders
+            print("running the borders:")
+
+            border_list, outside_edges = VoxelBorders.make_triangle_borders(self.snp, self.sw)
+            border_lines = []
+            edges = []
+            for border in border_list:
+                x1 = border[0][0][0]
+                y1 = border[0][0][1]
+                x2 = border[0][1][0]
+                y2 = border[0][1][1]
+                line = [[x1,y1], [x2,y2]]
+                border_lines.append(line)
+            for edge in outside_edges:
+                edges.append(edge[0])
+
+
+            border_colors = []
+            new_borders = [] #the borders to be chosen
+            for i in range(len(border_lines)):
+                border = border_lines[i]
+                voxel1 = border_list[i][1]
+                voxel2 = border_list[i][2]
+                angs1 = voxel1[6:9]
+                angs2 = voxel2[6:9]
+                color = VoxelBorders.angle_is_close(angs1,angs2)
+                if color == [0,0,0]:
+                    border_colors.append(color)
+                    new_borders.append(border_lines[i])
+            border_collection = mc.LineCollection(new_borders)
+            edge_collection = mc.LineCollection(edges)
+            border_collection.set_color(border_colors)
+            border_collection.set_zorder(20)
+
+            ax.add_collection(border_collection)
+            print("borders added")
+
+
+
             voxels = VoxelClick(fig, self.snp, self.sw, self)
             voxels.connect()
             print("-------------------------------------------------")
@@ -723,6 +763,7 @@ class MicFile():
             #plt.tight_layout()
             plt.gcf().subplots_adjust(right=0.75) #adjusting window for text to fit
             """
+
             plt.show()
             #return voxels.clicked_angles
 

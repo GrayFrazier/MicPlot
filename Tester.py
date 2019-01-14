@@ -115,5 +115,8 @@ def run_square():
     plt.show()
 
 
-run_triangle()
+#run_triangle()
 #run_square()
+
+from MicFileTool import MicFile
+MicFile("395z0.mic.LBFS").plot_mic_patches()
